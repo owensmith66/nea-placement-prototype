@@ -70,4 +70,37 @@ export class Camera {
 
         this.__setCameraOrientation(newOrientation)
     }
+
+// Public method to cast a ray from the camera's position and return the resulting vector3
+    castRay(currentMousePosition) {
+        let absoluteCameraPosition = this.__cameraPosition;
+
+        let rayOrigin =  absoluteCameraPosition;
+
+      //normalised device coordinates, explained in pseudocode
+      let normalisedDC = new Vector3(currentMousePosition.x, currentMousePosition.y, 0.5);
+        
+      //maps screen location back into 3d space relative to camera
+      normalisedDC.applyMatrix4(this.__cameraObject.projectionMatrixInverse);
+
+      //maps space relative to camera to world space
+      normalisedDC.applyMatrix4(this.__cameraObject.matrixWorld);
+
+
+      //gets a vector from the camera to this world position
+      let raydirection = normalisedDC.sub(rayOrigin);
+      raydirection = normaliseVector(raydirection);
+
+      if (raydirection.y >= 0) {
+        //if the ray is pointing up or directly sideways it will never hit the plane
+        return null;
+      }
+
+
+      let distance = (planeHeight - rayOrigin.y) / raydirection.y;
+      
+      let intersectionPoint = new Vector3(rayOrigin.x + raydirection.x * distance, planeHeight, rayOrigin.z + raydirection.z * distance);
+
+      return intersectionPoint;
+    }
 }
