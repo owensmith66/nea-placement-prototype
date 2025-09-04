@@ -9,9 +9,11 @@ export class Camera {
         this.__cameraPosition = new Vector3(0,10,20)
         this.__cameraOrientation = new Vector3(0,0,0)
         this.__movementSpeed = 1
+        this.__rotationSpeed = 1/150
 
 	// Tells the renderer where to render from
-        this.__renderer.position.setFromVector3(this.__cameraPosition)
+        this.__renderer.position.copy(this.__cameraPosition)
+
     }
 
 
@@ -19,13 +21,13 @@ export class Camera {
     __setCameraPosition(newPos) {
         this.__cameraPosition = newPos
 
-        this.__renderer.position.setFromVector3(this.__cameraPosition)
+        this.__renderer.position.copy(this.__cameraPosition)
     }
 // Private method to update the orientation of the caemra and the renderer
     __setCameraOrientation(newOri) {
         this.__cameraOrientation = newOri
 
-        this.__renderer.rotation.setFromVector3(cameraRotation)
+        this.__renderer.rotation.setFromVector3(newOri)
     }
 	
 // Public method to move the camera
@@ -35,23 +37,25 @@ export class Camera {
 
 	    // Defines all the directions which each key should cause the camera to move in
         let directions = {
-	        W: new Vector3(0,0,1),
-	        S: new Vector3(0,0,-1),
-	        A: new Vector3(-1,0,0),
-	        D: new Vector3(1,0,0),
-	        Q: new Vector3(0,-1,0),
-	        E: new Vector3(0,1,0),
+	        w: new Vector3(0,0, -this.__movementSpeed),
+	        s: new Vector3(0,0,this.__movementSpeed),
+	        a: new Vector3(- this.__movementSpeed,0,0),
+	        d: new Vector3( this.__movementSpeed,0,0),
+	        q: new Vector3(0,- this.__movementSpeed,0),
+	        e: new Vector3(0, this.__movementSpeed,0),
         }
 
 	    // Loop through all keys in the dictionary - if there is a key present in both this and keysDown, add the corresponding Vector3 onto the movementDirection
+      
         for (let key in directions) {
             if (keysDown[key]) {
-                movementDirection = movementDirection + directions[key]
+                movementDirection = movementDirection.add(directions[key])
             }
         }
 
 	    // Add this new direction to where the camera already was
-        let newPosition = this.__cameraPosition + movementDirection
+		     
+        let newPosition = this.__cameraPosition.add(movementDirection) 
 
 	    // Call the private method to update position
         this.__setCameraPosition(newPosition)
@@ -61,18 +65,22 @@ export class Camera {
 // Public method to rotate the camera
     rotateCamera(mouseDelta) {
         let rotationDelta = new Vector3(
-            - (mouseDelta.y), // Moving the mouse along the screen's x-axis should change the y-orientation (which acts in the plane perpendicular to the y axis)
-            mouseDelta.x, // Same applies for x-axis
+            - (mouseDelta.y) * this.__rotationSpeed, // Moving the mouse along the screen's x-axis should change the y-orientation (which acts in the plane perpendicular to the y axis)
+            mouseDelta.x * this.__rotationSpeed, // Same applies for x-axis
             0 // We don't want any z-rotation as this could cause the camera to flip upside down
         )
 
-        newOrientation = this.__cameraOrientation + rotationDelta
+       let newOrientation = this.__cameraOrientation.add(rotationDelta) 
 
         this.__setCameraOrientation(newOrientation)
     }
 
-// Public method to cast a ray from the camera's position and return the resulting vector3
+    getRenderer() {
+        return this.__renderer
+    }
+
     castRay(currentMousePosition) {
+        let planeHeight = 0; //y=0 plane
         let absoluteCameraPosition = this.__cameraPosition;
 
         let rayOrigin =  absoluteCameraPosition;
@@ -81,15 +89,15 @@ export class Camera {
       let normalisedDC = new Vector3(currentMousePosition.x, currentMousePosition.y, 0.5);
         
       //maps screen location back into 3d space relative to camera
-      normalisedDC.applyMatrix4(this.__cameraObject.projectionMatrixInverse);
+      normalisedDC.applyMatrix4(this.__renderer.projectionMatrixInverse);
 
       //maps space relative to camera to world space
-      normalisedDC.applyMatrix4(this.__cameraObject.matrixWorld);
+      normalisedDC.applyMatrix4(this.__renderer.matrixWorld);
 
 
       //gets a vector from the camera to this world position
       let raydirection = normalisedDC.sub(rayOrigin);
-      raydirection = normaliseVector(raydirection);
+      raydirection = raydirection.normalize();
 
       if (raydirection.y >= 0) {
         //if the ray is pointing up or directly sideways it will never hit the plane
@@ -102,5 +110,5 @@ export class Camera {
       let intersectionPoint = new Vector3(rayOrigin.x + raydirection.x * distance, planeHeight, rayOrigin.z + raydirection.z * distance);
 
       return intersectionPoint;
-    }
+   }
 }
