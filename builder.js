@@ -1,4 +1,5 @@
 import { Vector2 , BoxGeometry, Mesh}  from 'three';
+import { Furniture } from './furniture.js';
 
 export class Builder {
    
@@ -8,7 +9,7 @@ export class Builder {
         this.__objects = [];
         this.__mouse = new Vector2(0, 0);
 
-        this.__currentFurniture = "cube";
+        this.__currentFurniture = "./models/misc/cube.glb";
 
         // bind the onmouseclick function to the mouse being clicked
         window.addEventListener('click', this.__onMouseClick.bind(this));
@@ -26,21 +27,11 @@ export class Builder {
 
     let rayCastResult = this.__linkedCamera.castRay(this.__mouse);
     if (rayCastResult) {
-        console.log("Raycast hit at: ", rayCastResult);
-        this.__addCube(this.__scene, rayCastResult);
+        let newFurniture = new Furniture(this.__scene, "placeholderID", this.__currentFurniture, rayCastResult)
     }
     
 }
 
-    __addCube(scene, finalPosition) {
-        let geometry = new BoxGeometry(2, 2, 2);
-        let cube = new Mesh(geometry);
-    
-    //cube.position.set(Math.round(finalPosition.x / 2) * 2, 1, Math.round(finalPosition.z / 2) * 2);
-        cube.position.copy(finalPosition);
-        this.__scene.add(cube);
-        this.__objects.push(cube);
-    }
 
     __initialiseFurnitureButtons() {
 
@@ -52,10 +43,11 @@ export class Builder {
             button.addEventListener('click', (event) => {
 
                 // set the current furniture type to the name of the button
-                this.__currentFurniture = event.target.name;
+                this.__currentFurniture = event.currentTarget.dataset.parentfolder+"/"+event.currentTarget.name;
+
             })};
     }
-    
+
     
 
 }

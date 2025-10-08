@@ -8,7 +8,8 @@
     <script type="importmap">
         {
           "imports": {
-            "three": "https://cdn.jsdelivr.net/npm/three@0.173.0/build/three.module.js"
+            "three": "https://cdn.jsdelivr.net/npm/three@0.173.0/build/three.module.js",
+            "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.173.0/examples/jsm/"
           }
         }
       </script>
@@ -16,9 +17,9 @@
 <body>
     <!-- buttons to select furniture --> 
      
-    <button class="furniture-button" name="cube"> Cube </button>
-    <button class="furniture-button" name="roundedTable"> roundedTable </button>
-    <button class="furniture-button" name="squareTable"> squareTable </button>
+    <button class="furniture-button" name="cube" data-parentFolder="misc"> Cube </button>
+    <button class="furniture-button" name="roundedTable" data-parentFolder="tables"> roundedTable </button>
+    <button class="furniture-button" name="squareTable" data-parentFolder="tables"> squareTable </button>
 
 
 
