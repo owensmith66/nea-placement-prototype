@@ -53,6 +53,20 @@ export class Camera {
             }
         }
 
+
+        // movement eg (1,0,1) - forward and right
+        //rotation eg (0,90,0) - now facing right
+        // forward and right is now backward and right in world space     
+        
+        let rot = this.__cameraOrientation
+
+        let x = (Math.cos(rot.y) * movementDirection.x + Math.sin(rot.y) * movementDirection.z) * Math.cos(rot.x) 
+        let z = (Math.cos(rot.y) * movementDirection.z + Math.sin(rot.y) * movementDirection.x)* Math.cos(rot.x) 
+
+        
+
+
+        movementDirection = new Vector3 (x, movementDirection.y, z)
 	    // Add this new direction to where the camera already was
 		     
         let newPosition = this.__cameraPosition.add(movementDirection) 
@@ -112,3 +126,5 @@ export class Camera {
       return intersectionPoint;
    }
 }
+
+                                              

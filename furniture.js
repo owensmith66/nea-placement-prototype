@@ -6,20 +6,22 @@ import { Vector3 } from "three"
 let loader = new MeshLoader();
 
 export class Furniture extends SceneObject {
-    constructor(parent, id, name, position, orientation) {
+    constructor(parent, id, name, position, orientation, test=false) {
         super(parent, id, position, orientation)
         this.__furnitureName = name
 
 
        
-    async function load() {
+    async function load(test) {
         try {
             this.__linkedMesh = await loader.loadMesh(name)
 
             let height = loader.getMeshHeight(this.__linkedMesh)
-
-            position = new Vector3(position.x, height/2, position.z)
-
+            if (!(test)) {
+                position = new Vector3(position.x, height/2, position.z)
+            
+            }
+            
             this.setPosition(position)
             //this.setOrientation(orientation)
             parent.add(this.__linkedMesh)        
@@ -32,7 +34,7 @@ export class Furniture extends SceneObject {
 }
         
     
-       load.bind(this)()
+       load.bind(this)(test)
         
         //Apply to newly created mesh 
        

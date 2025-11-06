@@ -15,6 +15,11 @@ export class SceneObject {
         this.__linkedMesh.position.copy(newPos)
     }
 
+
+    setSize(x, y, z) {
+        this.__linkedMesh.scale.set(x, y, z)
+    }
+
     setOrientation(newOri) {
         this.__orientation = newOri
         this.__linkedMesh.orientation = newOri

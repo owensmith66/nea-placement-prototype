@@ -11,6 +11,7 @@ export class MeshLoader {
 
     //This will involve connection to an external database in real project
     __getGLBFromName(furnitureName) {
+
         return "./models/"+furnitureName+".glb"
     };
 
@@ -21,8 +22,6 @@ export class MeshLoader {
         fileToMesh.load(
             this.__getGLBFromName(furnitureName),
             function onLoad(gltf) {
-
-                console.log(gltf.asset)
                 resolve(gltf.scene)
             },
             null,
@@ -37,8 +36,6 @@ export class MeshLoader {
         let box = new Box3().setFromObject(mesh)
         let  size = new Vector3()
         box.getSize(size)
-
-        console.log('Model height:', size.y)
 
         return(size.y)
     }
