@@ -1,6 +1,7 @@
-import {Vector2, Scene, WebGLRenderer, PlaneGeometry, Mesh, MeshStandardMaterial, DoubleSide, DirectionalLight} from "three";
+import {Vector2, WebGLRenderer, PlaneGeometry, Mesh, MeshStandardMaterial, DoubleSide, DirectionalLight} from "three";
 import {Camera} from "./camera.js";
 import {Builder} from "./builder.js";
+import {Scene} from "./scene.js";
 
 let keysDown = []
 let mouseDelta = new Vector2(0,0)
@@ -35,8 +36,11 @@ window.addEventListener("keydown", keyDown)
 window.addEventListener("keyup", keyUp)
 window.addEventListener("mousemove", mouseMove)
 
-//initialising a basic three scene to test if camera movement works
 
+
+
+
+//initialising a basic three scene to test if camera movement works
 
 
 let renderer = new WebGLRenderer({ antialias: true })
@@ -58,7 +62,7 @@ function animate() {
 
     requestAnimationFrame(animate);
 
-    renderer.render(scene, testCamera.getRenderer());
+    renderer.render(scene.getThreeScene(), testCamera.getRenderer());
     
 }
 

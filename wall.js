@@ -1,6 +1,6 @@
 //This is used to make new vertices/faces at runtime
 import { BufferGeometry, Vector2, Vector3, Mesh, BufferAttribute } from "three"
-import { Furniture } from './furniture.js';
+import { Structure } from "./structure.js"
 
 
 
@@ -14,10 +14,10 @@ function vectorToFloatArray(vectorArray) {
     return floatArray
 }
 
-function createGeometry(vertices) {
+/*function createGeometry(vertices) {
     let geometry = new BufferGeometry() 
 
-    let indices = [ //this says which vertices make up each triangle
+    /*let indices = [ //this says which vertices make up each triangle
        // front face
         0, 2, 4,
         4, 2, 6,
@@ -38,22 +38,106 @@ function createGeometry(vertices) {
         2, 1, 3,
     ]
 
+        let indices = [
+    // front
+    0, 4, 2,
+    2, 4, 6,
+
+    // back
+    1, 3, 5,
+    3, 7, 5,
+
+    // left
+    0, 1, 4,
+    1, 5, 4,
+
+    // right
+    2, 6, 3,
+    3, 6, 7,
+
+    // top
+    4, 5, 6,
+    5, 7, 6,
+
+    // bottom
+    0, 2, 1,
+    2, 3, 1,
+];
+
     vertices = vectorToFloatArray(vertices)
 
     geometry.setIndex(indices)
     geometry.setAttribute('position', new BufferAttribute(vertices, 3))
-    geometry.computeVertexNormals()
+    geometry.computeVertexNormals(true)
 
-    console.log(geometry)
+    //let wallGeometry = new Mesh(geometry)
+    return geometry
+}*/
 
-    let wallGeometry = new Mesh(geometry)
-    return wallGeometry
+
+function createGeometry(vertices) {
+
+    //make it so that vertices get duplicated for each face
+    vertices = [
+        // front face (4 vertices)
+        vertices[0], vertices[2], vertices[4], vertices[6],
+
+        // back face
+        vertices[1], vertices[5], vertices[3], vertices[7],
+
+        // left face
+        vertices[0], vertices[4], vertices[1], vertices[5],
+
+        // right face
+        vertices[2], vertices[3], vertices[6], vertices[7],
+
+        // top face
+        vertices[4], vertices[6], vertices[5], vertices[7],
+
+        // bottom face
+        vertices[0], vertices[1], vertices[2], vertices[3]
+    ]
+
+    // every face uses its own four vertices
+    // triangles for each face
+    let indices = [
+    // FRONT (flipped)
+    0, 2, 1,   1, 2, 3,
+
+    // BACK (unchanged)
+    4, 5, 6,   5, 7, 6,
+
+    // LEFT (unchanged)
+    8, 10, 9,  9, 10, 11,
+
+    // RIGHT (flipped)
+    12, 14, 13,  13, 15, 14,
+
+    // TOP (unchanged)
+    16, 17, 18,  17, 19, 18,
+
+    // BOTTOM (unchanged)
+    20, 21, 22,  21, 23, 22
+];
+
+    // flatten vertices
+    let floatVerts = vectorToFloatArray(vertices);
+
+    let geometry = new BufferGeometry();
+    geometry.setIndex(indices);
+    geometry.setAttribute("position", new BufferAttribute(floatVerts, 3));
+    geometry.computeVertexNormals();
+
+    return geometry;
 }
 
-export class Wall {
-    constructor(node1, node2, thickness, height, scene) {
+
+
+
+
+export class Wall extends Structure {
+    constructor(node1, node2, thickness, height, colour, scene) {
         
-        // cuboids have 8 unique vertices 
 
         let xzDirection = new Vector2(
             node1.x - node2.x,
@@ -80,10 +164,7 @@ export class Wall {
 	        node2.clone().sub(perpendicularVector3)
         ]
 
-
-       
             let topVertices = []
-
 
             //need to clone the vector before adding to it
 
@@ -95,7 +176,12 @@ export class Wall {
 
         let wallGeometry = createGeometry(vertices)
 
-        scene.add(wallGeometry)
+        //scene.add(wallGeometry)
+
+        super(scene, null, wallGeometry, colour)
+
+       // this.__linkedMesh = wallGeometry
+        //this.setColour(colour)
 
     }
 }

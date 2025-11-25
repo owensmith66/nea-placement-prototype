@@ -1,28 +1,10 @@
-import { Mesh } from "three";
+import { Mesh } from "three"
 
 export class SceneObject {
-    constructor(parent, id, position, orientation) {
+    constructor(parent, id) {
         this.__parentScene = parent
-        this.__id = id;
-        this.__position = position;
-        this.__orientation = orientation;
+        this.__id = id
         this.__linkedMesh = null
-    }
-
-    //set both this object's position and the linked mesh's position to the new position
-    setPosition(newPos) {
-        this.__position = newPos
-        this.__linkedMesh.position.copy(newPos)
-    }
-
-
-    setSize(x, y, z) {
-        this.__linkedMesh.scale.set(x, y, z)
-    }
-
-    setOrientation(newOri) {
-        this.__orientation = newOri
-        this.__linkedMesh.orientation = newOri
     }
 
     remove() {
@@ -35,7 +17,14 @@ export class SceneObject {
             mesh.geometry.dispose();
           }
 
+    }
 
+    getLinkedMesh() {
+        return this.__linkedMesh
+    }
+
+    getId() {
+        return this.__id
     }
 
 }

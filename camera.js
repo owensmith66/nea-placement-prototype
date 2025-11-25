@@ -123,6 +123,8 @@ export class Camera {
       
       let intersectionPoint = new Vector3(rayOrigin.x + raydirection.x * distance, planeHeight, rayOrigin.z + raydirection.z * distance);
 
+
+      
       return intersectionPoint;
    }
 }
